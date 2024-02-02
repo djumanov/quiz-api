@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from flaskr.config import Config
 from flaskr.database import db
 
+
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -13,13 +14,10 @@ def create_app(config_class=Config):
     migrate = Migrate(app, db)
 
     # Register blueprints here
-    from flaskr.main import bp as main_bp
-    app.register_blueprint(main_bp)
+    from flaskr.views.accounts import user_bp
+    from flaskr.views.quizzes import quiz_bp
 
-
-    @app.route('/test/')
-    def test_page():
-        return '<h1>Testing the Flask Application Factory Pattern</h1>'
+    app.register_blueprint(user_bp)
+    app.register_blueprint(quiz_bp)
 
     return app
-

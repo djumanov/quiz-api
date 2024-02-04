@@ -1,31 +1,31 @@
 from flask import Blueprint
 from flaskr.controllers.quizzes import (
-    get_all_quizzes,
-    get_quiz_by_id,
-    create_quiz,
-    update_quiz,
-    delete_quiz,
+    create_language, get_languages, 
+    create_quiz, get_quizzes_by_language,
+    create_question_type, get_question_types,
+    create_question, get_questions_by_quiz, 
+    create_answer, get_answers_by_question,
 )
 
+quizzes = Blueprint('quizzes', __name__)
 
-quiz_bp = Blueprint('quiz', __name__, url_prefix='/quizzes')
 
-@quiz_bp.route('/', methods=['GET'])
-def view_get_all_quizzes():
-    return get_all_quizzes()
+# get and create languages
+quizzes.add_url_rule('/languages', 'get_languages', get_languages, methods=['GET'])
+quizzes.add_url_rule('/languages', 'create_language', create_language, methods=['POST'])
 
-@quiz_bp.route('/<int:quiz_id>', methods=['GET'])
-def view_get_quiz_by_id(quiz_id):
-    return get_quiz_by_id(quiz_id)
+# get and create quizzes
+quizzes.add_url_rule('/quizzes', 'create_quiz', create_quiz, methods=['POST'])
+quizzes.add_url_rule('/quizzes/<int:language_id>', 'get_quizzes_by_language', get_quizzes_by_language, methods=['GET'])
 
-@quiz_bp.route('/', methods=['POST'])
-def view_create_quiz():
-    return create_quiz()
+# get and create question types
+quizzes.add_url_rule('/question_types', 'create_question_type', create_question_type, methods=['POST'])
+quizzes.add_url_rule('/question_types', 'get_question_types', get_question_types, methods=['GET'])
 
-@quiz_bp.route('/<int:quiz_id>', methods=['PUT'])
-def view_update_quiz(quiz_id):
-    return update_quiz(quiz_id)
+# get and create questions
+quizzes.add_url_rule('/quizzes/<int:quiz_id>/questions', 'create_question', create_question, methods=['POST'])
+quizzes.add_url_rule('/quizzes/<int:quiz_id>/questions', 'get_questions_by_quiz', get_questions_by_quiz, methods=['GET'])
 
-@quiz_bp.route('/<int:quiz_id>', methods=['DELETE'])
-def view_delete_quiz(quiz_id):
-    return delete_quiz(quiz_id)
+# get and create answers
+quizzes.add_url_rule('/questions/<int:question_id>/answers', 'create_answer', create_answer, methods=['POST'])
+quizzes.add_url_rule('/questions/<int:question_id>/answers', 'get_answers_by_question', get_answers_by_question, methods=['GET'])

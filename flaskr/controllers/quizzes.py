@@ -1,71 +1,113 @@
 from flask import jsonify, request
+
 from marshmallow import ValidationError
+from sqlalchemy.exc import IntegrityError
+
 from flaskr.database import db
-from flaskr.models.quiz import Quiz
-from flaskr.schemas.quizzes import QuizSchema
 
-def get_all_quizzes():
-    quizzes = Quiz.query.all()
-    quiz_schema = QuizSchema(many=True)
-    result = quiz_schema.dump(quizzes)
-    return jsonify(result)
+from flaskr.models.quiz import Language, Quiz, QustionType, Question, Answer
 
-def get_quiz_by_id(quiz_id):
-    quiz = Quiz.query.get(quiz_id)
+from flaskr.schemas.quizzes import LanguageSchema, QuizSchema, QustionTypeSchema, QuestionSchema, AnswerSchema
 
-    if not quiz:
-        return jsonify({'message': 'Quiz not found'}), 404
 
-    quiz_schema = QuizSchema()
-    result = quiz_schema.dump(quiz)
-    return jsonify(result)
+
+def create_language():
+    try:
+        language = LanguageSchema().load(request.json)
+        db.session.add(language)
+        db.session.commit()
+        return LanguageSchema().jsonify(language), 201
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+    except IntegrityError as e:
+        db.session.rollback()
+        return jsonify({"error": "Some parameters must be unique"}), 400
+
+
+def get_languages():
+    languages = Language.query.all()
+    return LanguageSchema(many=True).jsonify(languages)
+
 
 def create_quiz():
-    data = request.json
-
     try:
-        quiz_schema = QuizSchema()
-        validated_data = quiz_schema.load(data)
-    except ValidationError as e:
-        return jsonify({'message': 'Validation error', 'errors': e.messages}), 400
+        quiz = QuizSchema().load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+    except IntegrityError as e:
+        db.session.rollback()
+        return jsonify({"error": "Some parameters must be unique"}), 400
 
-    new_quiz = Quiz(**validated_data)
-
-    db.session.add(new_quiz)
+    db.session.add(quiz)
     db.session.commit()
 
-    result = quiz_schema.dump(new_quiz)
-    return jsonify(result), 201
+    return QuizSchema().jsonify(quiz), 201
 
-def update_quiz(quiz_id):
-    quiz = Quiz.query.get(quiz_id)
 
-    if not quiz:
-        return jsonify({'message': 'Quiz not found'}), 404
+def get_quizzes_by_language(language_id):
+    quizzes = Quiz.query.filter_by(language_id=language_id).all()
+    return QuizSchema(many=True).jsonify(quizzes)
 
-    data = request.json
 
+def create_question_type():
     try:
-        quiz_schema = QuizSchema()
-        validated_data = quiz_schema.load(data)
-    except ValidationError as e:
-        return jsonify({'message': 'Validation error', 'errors': e.messages}), 400
+        question_type = QustionTypeSchema().load(request.json)
+        db.session.add(question_type)
+        db.session.commit()
+        return QustionTypeSchema().jsonify(question_type), 201
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+    except IntegrityError as e:
+        db.session.rollback()
+        return jsonify({"error": "Some parameters must be unique"}), 400
 
-    for key, value in validated_data.items():
-        setattr(quiz, key, value)
 
+def get_question_types():
+    question_types = QustionType.query.all()
+    return QustionTypeSchema(many=True).jsonify(question_types)
+
+
+def create_question(quiz_id):
+    try:
+        # add quiz_id to the request.json
+        request.json['quiz_id'] = quiz_id
+
+        question = QuestionSchema().load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+    except IntegrityError as e:
+        db.session.rollback()
+        return jsonify({"error": "Some parameters must be unique"}), 400
+
+    db.session.add(question)
     db.session.commit()
 
-    result = quiz_schema.dump(quiz)
-    return jsonify(result)
+    return QuestionSchema().jsonify(question), 201
 
-def delete_quiz(quiz_id):
-    quiz = Quiz.query.get(quiz_id)
 
-    if not quiz:
-        return jsonify({'message': 'Quiz not found'}), 404
+def get_questions_by_quiz(quiz_id):
+    questions = Question.query.filter_by(quiz_id=quiz_id).all()
+    return QuestionSchema(many=True).jsonify(questions)
 
-    db.session.delete(quiz)
+
+def create_answer(question_id):
+    try:
+        # add question_id to the request.json
+        request.json['question_id'] = question_id
+        
+        answer = AnswerSchema().load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+    except IntegrityError as e:
+        db.session.rollback()
+        return jsonify({"error": "Some parameters must be unique"}), 400
+
+    db.session.add(answer)
     db.session.commit()
 
-    return jsonify({'message': 'Quiz deleted successfully'})
+    return AnswerSchema().jsonify(answer), 201
+
+
+def get_answers_by_question(question_id):
+    answers = Answer.query.filter_by(question_id=question_id).all()
+    return AnswerSchema(many=True).jsonify(answers)

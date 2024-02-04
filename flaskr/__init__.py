@@ -15,9 +15,9 @@ def create_app(config_class=Config):
 
     # Register blueprints here
     from flaskr.views.accounts import user_bp
-    from flaskr.views.quizzes import quiz_bp
+    from flaskr.views.quizzes import quizzes
 
     app.register_blueprint(user_bp)
-    app.register_blueprint(quiz_bp)
+    app.register_blueprint(quizzes)
 
     return app

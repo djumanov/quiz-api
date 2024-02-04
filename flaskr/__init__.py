@@ -14,10 +14,10 @@ def create_app(config_class=Config):
     migrate = Migrate(app, db)
 
     # Register blueprints here
-    from flaskr.views.accounts import user_bp
-    from flaskr.views.quizzes import quizzes
+    from flaskr.views.accounts import accounts_bp
+    from flaskr.views.quizzes import quizzes_bp
 
-    app.register_blueprint(user_bp)
-    app.register_blueprint(quizzes)
+    app.register_blueprint(accounts_bp)
+    app.register_blueprint(quizzes_bp)
 
     return app

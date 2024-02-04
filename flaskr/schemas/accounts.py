@@ -1,8 +1,9 @@
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from flaskr.database import ma
+
 from flaskr.models.accounts import Account, User
 
 
-class AccountSchema(SQLAlchemyAutoSchema):
+class AccountSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Account
         load_instance = True
@@ -10,7 +11,7 @@ class AccountSchema(SQLAlchemyAutoSchema):
         include_fk = True
 
 
-class UserSchema(SQLAlchemyAutoSchema):
+class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True

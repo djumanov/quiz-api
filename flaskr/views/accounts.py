@@ -1,28 +1,10 @@
-from flask import Blueprint, jsonify, request
-from flaskr.controllers.accounts import get_all_users, get_user_by_id, create_user, update_user, delete_user
+from flask import Blueprint
+
+from flaskr.controllers.accounts import create_user_with_account, get_user_by_id, get_all_users
+
+accounts_bp = Blueprint('accounts', __name__)
 
 
-user_bp = Blueprint('user', __name__, url_prefix='/users')
-
-@user_bp.route('/', methods=['GET', 'POST'])
-def view_get_all_users():
-    if request.method == 'GET':
-        return get_all_users()
-    elif request.method == 'POST':
-        return create_user()
-
-@user_bp.route('/<int:user_id>', methods=['GET'])
-def view_get_user_by_id(user_id):
-    return get_user_by_id(user_id)
-
-# @user_bp.route('/', methods=['POST'])
-# def view_create_user():
-#     return create_user()
-
-@user_bp.route('/<int:user_id>', methods=['PUT'])
-def view_update_user(user_id):
-    return update_user(user_id)
-
-@user_bp.route('/<int:user_id>', methods=['DELETE'])
-def view_delete_user(user_id):
-    return delete_user(user_id)
+accounts_bp.add_url_rule('/users', 'create_user_with_account', create_user_with_account, methods=['POST'])
+accounts_bp.add_url_rule('/users/<int:user_id>', 'get_user_by_id', get_user_by_id, methods=['GET'])
+accounts_bp.add_url_rule('/users', 'get_all_users', get_all_users, methods=['GET'])

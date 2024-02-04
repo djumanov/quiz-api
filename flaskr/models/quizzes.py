@@ -1,5 +1,6 @@
 from flaskr.database import db
 from flaskr.models.accounts import User, Account
+from sqlalchemy import UniqueConstraint
 
 
 class Language(db.Model):
@@ -116,6 +117,8 @@ class UserQuiz(db.Model):
     score = db.Column(db.Float, nullable=False, default=0)
     taken_at = db.Column(db.DateTime, server_default=db.func.now())
     submitted_at = db.Column(db.DateTime, nullable=True)
+
+    __table_args__ = (UniqueConstraint('user_id', 'quiz_id', name='unique_user_quiz'),)
 
     def __repr__(self):
         return f'<UserQuiz {self.user_id} - {self.quiz_id}>'

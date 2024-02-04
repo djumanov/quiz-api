@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from flaskr.database import db
 
-from flaskr.models.quiz import Language, Quiz, QustionType, Question, Answer
+from flaskr.models.quizzes import Language, Quiz, QustionType, Question, Answer
 
 from flaskr.schemas.quizzes import LanguageSchema, QuizSchema, QustionTypeSchema, QuestionSchema, AnswerSchema
 

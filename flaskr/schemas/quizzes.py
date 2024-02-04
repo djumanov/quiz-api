@@ -1,6 +1,6 @@
 from flaskr.database import ma
 
-from flaskr.models.quiz import Language, Quiz, QustionType, Question, Answer, UserQuiz, UserAnswer
+from flaskr.models.quizzes import Language, Quiz, QustionType, Question, Answer, UserQuiz, UserAnswer
 
 
 class LanguageSchema(ma.SQLAlchemyAutoSchema):

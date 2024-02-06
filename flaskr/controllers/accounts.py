@@ -26,8 +26,8 @@ def create_user_with_account():
     return UserSchema().jsonify(user), 201
 
 
-def get_user_by_id(user_id):
-    user = User.query.get(user_id)
+def get_user_by_id(telegram_id):
+    user = User.query.filter_by(telegram_id=telegram_id).first()
     if not user:
         return jsonify({'error': 'User not found'}), 404
     return UserSchema().jsonify(user), 200
@@ -36,3 +36,10 @@ def get_user_by_id(user_id):
 def get_all_users():
     users = User.query.all()
     return UserSchema(many=True).jsonify(users), 200
+
+
+def is_user_in_db(telegram_id):
+    user = User.query.filter_by(telegram_id=telegram_id).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    return '', 200

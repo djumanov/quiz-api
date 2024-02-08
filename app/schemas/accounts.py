@@ -1,6 +1,6 @@
-from flaskr.database import ma
+from app.extensions import ma
 
-from flaskr.models.accounts import Account, User
+from app.models.accounts import Account, User
 
 
 class AccountSchema(ma.SQLAlchemyAutoSchema):

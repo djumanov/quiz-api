@@ -3,12 +3,11 @@
 ## requirements
 
 - python 3.9
-- Flask
-- psycopg2-binary
-- Flask-SQLAlchemy
-- marshmallow-sqlalchemy
-- Flask-Migrate
 - python-dotenv
+- Flask
+- Flask-Migrate
+- flask-marshmallow
+- marshmallow-sqlalchemy
 
 ## Database
 
